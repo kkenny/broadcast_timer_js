@@ -1,0 +1,21 @@
+<html>
+<body>
+<div id="events"></div>
+
+<script src="events.js"></script>
+<script>
+var html, aLen, i;
+aLen = events.length;
+
+html = "<table>";
+
+for (i = 0; i < aLen; i++) {
+  html += "<tr><td>" + events[i].date + "</td><td>" + events[i].subject + "</td></tr>";
+}
+
+html += "</table>"
+
+
+document.getElementById("events").innerHTML = html;
+</script>
+</html>

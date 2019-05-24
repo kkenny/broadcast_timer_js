@@ -59,61 +59,95 @@ div.main { background-color: #222; width: 50%; position: center; margin: auto;}
 <div id="debug" class="debug"></div>
 </div>
 
+<script src="events.js"></script>
 <script>
 var version = "0.6.017"
 var debug = true;
 
 var style = 'green';
+
+var eventsLength = events.length;
+
 var array_counter = 0;
-var cDate = (array_counter + 0);
-var cSubject = (array_counter + 1);
-var cNotes = (array_counter + 2);
-var nSubject = (cSubject + 3);
-var nDate = (cDate + 3);
+var currentObject = array_counter;
+var nextObject = array_counter + 1;
 
+var notes = events[currentObject].notes;
+var currentDate = events[currentObject].date;
+var nextDate = events[nextObject].date;
+var currentStart = currentDate;
+var currentEnd = nextDate;
+var nextStart = nextDate;
+var nextEnd = events[(nextObject + 1)].date;
+var currentSubject = events[currentObject].subject;
+var nextSubject = events[nextObject].subject;
 
-var events = [
-  "May 23, 2019 16:00:00", "start", "",
-  "May 24, 2019 15:00:00", "Example 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Consectetur purus ut faucibus pulvinar elementum. Pellentesque habitant morbi tristique senectus et. Amet risus nullam eget felis. Semper auctor neque vitae tempus quam pellentesque nec nam aliquam.",
-  "May 24, 2019 15:30:00", "Example 2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Consectetur purus ut faucibus pulvinar elementum. Pellentesque habitant morbi tristique senectus et. Amet risus nullam eget felis. Semper auctor neque vitae tempus quam pellentesque nec nam aliquam.",
-  "May 24, 2019 16:30:00", "Leave for Day", "Until next time...",
-  "May 27, 2019 09:00:00", "Memorial Day", "<a href='https://www.history.com/topics/holidays/memorial-day-history'>Memorial Day History</a>",
-  "May 28, 2019 09:00:00", "Example 3", "More Notes"
-];
+// Set the date we're counting down to
+var countDownDate = new Date(nextDate).getTime();
+var currentTimer = new Date(currentDate).getTime();
 
-document.getElementById("notes").innerHTML = events[cNotes];
+document.getElementById("notes").innerHTML = notes;
+document.getElementById("currentSubject").innerHTML = "<div class=upNext>Now: " + currentSubject + "</div>";
+document.getElementById("upNext").innerHTML = "<div class=upNext>Next: " + nextSubject + "</div>";
+document.getElementById("currentStartEnd").innerHTML = "Start Time: " + currentDate + "<br />End Time: " + currentEnd;
+document.getElementById("nextStartEnd").innerHTML = "Start Time: " + nextDate + "<br />End Time: " + nextEnd;
 
 function incArray() {
-  array_counter++;
-  array_counter++;
-  array_counter++;
-  cDate = array_counter + 0;
-  cSubject = array_counter + 1;
-  cNotes = array_counter + 2;
-  nSubject = cSubject + 3;
-  nDate = cDate + 3;
-  document.getElementById("notes").innerHTML = events[cNotes];
-  countDownDate = new Date(events[nDate]).getTime();
-  currentTimer = new Date(events[cDate]).getTime();
+  if (array_counter < eventsLength) {
+    array_counter++;
+  }
+  currentObject = array_counter;
+  currentDate = events[currentObject].date;
+  currentSubject = events[currentObject].subject;
+  currentStart = currentDate;
+  currentEnd = nextDate;
+  nextStart = nextDate;
+  nextEnd = events[(nextObject + 1)].date;
+
+  nextObject = array_counter + 1;
+  nextDate = events[nextObject].date;
+  nextSubject = events[nextObject].subject;
+  notes = events[currentObject].notes;
+
+  document.getElementById("notes").innerHTML = notes;
+  document.getElementById("currentSubject").innerHTML = "<div class=upNext>Now: " + currentSubject + "</div>";
+  document.getElementById("upNext").innerHTML = "<div class=upNext>Next: " + nextSubject + "</div>";
+  document.getElementById("currentStartEnd").innerHTML = "Start Time: " + currentDate + "<br />End Time: " + currentEnd;
+  document.getElementById("nextStartEnd").innerHTML = "Start Time: " + nextDate + "<br />End Time: " + nextEnd;
+  countDownDate = new Date(nextDate).getTime();
+  currentTimer = new Date(currentDate).getTime();
 }
 
 function decArray() {
-  array_counter--;
-  array_counter--;
-  array_counter--;
-  cDate = array_counter + 0;
-  cSubject = array_counter + 1;
-  cNotes = array_counter + 2;
-  nSubject = cSubject + 3;
-  nDate = cDate + 3;
-  document.getElementById("notes").innerHTML = events[cNotes];
-  countDownDate = new Date(events[nDate]).getTime();
-  currentTimer = new Date(events[cDate]).getTime();
+  if (array_counter > 0) {
+    array_counter--;
+  }
+
+  currentObject = array_counter;
+  nextObject = array_counter + 1;
+  currentDate = events[currentObject].date;
+  nextDate = events[nextObject].date;
+  currentSubject = events[currentObject].subject;
+  nextSubject = events[nextObject].subject;
+  currentStart = currentDate;
+  currentEnd = nextDate;
+  nextStart = nextDate;
+  nextEnd = events[(nextObject + 1)].date;
+  notes = events[currentObject].notes;
+
+  nextObject = array_counter + 1;
+  nextDate = events[nextObject].date;
+  nextSubject = events[nextObject].subject;
+
+  document.getElementById("notes").innerHTML = notes;
+  document.getElementById("currentSubject").innerHTML = "<div class=upNext>Now: " + currentSubject + "</div>";
+  document.getElementById("upNext").innerHTML = "<div class=upNext>Next: " + nextSubject + "</div>";
+  document.getElementById("currentStartEnd").innerHTML = "Start Time: " + currentDate + "<br />End Time: " + currentEnd;
+  document.getElementById("nextStartEnd").innerHTML = "Start Time: " + nextDate + "<br />End Time: " + nextEnd;
+  countDownDate = new Date(nextDate).getTime();
+  currentTimer = new Date(currentDate).getTime();
 }
 
-// Set the date we're counting down to
-var countDownDate = new Date(events[nDate]).getTime();
-var currentTimer = new Date(events[cDate]).getTime();
 
 // Update the count down every 1 second
 var x = setInterval(function() {
@@ -267,12 +301,6 @@ var x = setInterval(function() {
   }
 
   // current event stuff
-  var cStart = events[cDate];
-  var cEnd = events[(cDate + 3)];
-  var nStart = cEnd;
-  var nEnd = events[(cDate + 6)];
-
-
   document.getElementById("calDate").innerHTML = d.getFullYear() + "/" + d.getMonth() + "/" + d.getDate();
   document.getElementById("now").innerHTML = hour + ":" + minute + ":" + second;
   document.getElementById("utc_now").innerHTML = hourUTC + ":" + minuteUTC + ":" + secondUTC;
@@ -280,13 +308,9 @@ var x = setInterval(function() {
   // Display the result in the element with id="clock"
   document.getElementById("countdown").innerHTML = "<div class=" + style + ">" + cDays + cHours + ":" + cMinutes + ":" + cSeconds + "</div>";
   document.getElementById("nextCountdown").innerHTML = "<div class=" + style + ">" + days + hours + ":" + minutes + ":" + seconds + "</div>";
-  document.getElementById("currentSubject").innerHTML = "<div class=upNext>Now: " + events[cSubject] + "</div>";
-  document.getElementById("currentStartEnd").innerHTML = "Start Time: " + cStart + "<br />End Time: " + cEnd;
-  document.getElementById("upNext").innerHTML = "<div class=upNext>Next: " + events[nSubject] + "</div>";
-  document.getElementById("nextStartEnd").innerHTML = "Start Time: " + nStart + "<br />End Time: " + nEnd;
 
   if (debug == true) {
-    document.getElementById("debug").innerHTML = "debug: " + debug + "<br />Version: " + version + "<br />Current time object: " + cDate + "<br />Current subject object: " + cSubject + "<br />current notes object: " + cNotes + "<br />next time object: " + nDate + "<br />next subject object: " + nSubject + "<br />current array counter: " + array_counter + "<br />Start Time: " + cStart + "<br />End Time: " + cEnd + "<br />" + cDays + "<br />" + cHours + "<br />" + cMinutes + "<br />" + cSeconds;
+    document.getElementById("debug").innerHTML = "debug: " + debug + "<br />Version: " + version + "<br />Current time object: " + currentDate + "<br />Current subject object: " + currentSubject + "<br />current notes object: " + notes + "<br />next time object: " + nextDate + "<br />next subject object: " + nextSubject + "<br />current array counter: " + array_counter + "<br />Start Time: " + currentStart + "<br />End Time: " + currentEnd + "<br />" + cDays + "<br />" + cHours + "<br />" + cMinutes + "<br />" + cSeconds;
   }
 
   // If the count down is finished, write some text
