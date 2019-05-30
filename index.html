@@ -1,301 +1,116 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Countdown Timer</title>
-<style>
-body { background-color: #333; color: #fff;}
-th { color: #FFF; font-size: 28px; }
-table { border-collapse: collapse; }
-table, th, td { border: 0px solid #999; padding: 0px; padding-top: 0px; padding-bottom: 0px; }
-#clock { color: #AAA; text-align: center; font-size: 90px; }
-.mainClock { text-align: center; font-size: 20px; border: 1px solid #999; padding: 15px; padding-top: 5px; padding-bottom: 5px; }
-.countdown { text-align: right; font-size: 60px; }
-.warn { color: yellow; }
-.over { color: red; }
-.green { color: lime; }
-#now { color: #FFF; font-size: 20px; }
-#utc_now { color: #FFF; font-size: 20px; }
-.debug { background-color: #000; color: lime; border: 2px; border-color: lime; }
-.notes { background-color: #000; color: #AAA; width: 100%; min-height: 400px;}
-.notesTitle { background-color: #000; color: #AAA; width: 100%; font-size: 20px;}
-div.main { background-color: #222; width: 50%; position: center; margin: auto;}
-.right { text-align: right; border: 0px;}
-.left { text-align: left; border: 0px; }
-.nav { border: 0px; width: 100%; padding:0px; }
-.upNext { color: #fff; font-size: 45px; }
-</style>
-
+	<title>Broadcast Timer</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Broadcast Timer">
+	<meta name="author" content="Kameron Kenny">
+	<!-- Mobile Specific Metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Font -->
+	<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/skeleton.css">
+	<link rel="stylesheet" href="css/custom.css">
+	<!--  <link rel="stylesheet" type="text/css" href="style.css"> -->
+	<!-- No Cache -->
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
 </head>
 <body>
 
-<!-- Display the countdown timer in an element -->
-<table class="mainClock">
-<th class="mainClock">Date</th><th class="mainClock">Current TZ</th><th class="mainClock">UTC</th>
-<tr><td class="mainClock"><div id="calDate"></div></td><td class="mainClock"><div id="now"></div></td><td class="mainClock"><div id="utc_now"></div></td></tr>
-</table>
+<!-- Top Bar -->
+<div class="section hero u-full-width u-max-full-width">
+	<div class="container navbar">
+		<div class="row">
+			<div class="one-half column u-pull-left">
+				<div class="one-third column">
+					<div class="clock u-pull-left">Date: </div>
+					<div id="calDate" class="clock u-pull-left"></div>
+				</div>
+				<div class="one-third column">
+					<div class="clock u-pull-left">Local: </div>
+					<div id="now" class="clock u-pull-left"></div>
+				</div>
+				<div class="one-third column">
+					<div class="clock u-pull-left">UTC: </div>
+					<div id="utc_now" class="clock u-pull-left"></div>
+				</div>
+			</div>
+			<div class="one-half column u-pull-right">
+				<div class="nav-button">
+					<button class="button" onclick="decArray()">Previous</button>
+					<button class="button" onclick="incArray()">Next</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- / Top Bar -->
 
-<div class="main">
+<!-- mid-section -->
+<div class="section">
+	<div class="container">
+		<div class="row columns">
+			<!-- events-list -->
+			<div class="one-third column events">
+				<div id="events-list"></div>
+			</div>
+			<!-- /events-list -->
+			<!-- current-next events -->
+			<div class="two-thirds column">
+				<!-- current-event -->
+				<div class="header">
+					<div class="row">
+						<div class="two-thirds column">
+							<div id="currentSubject" class="subject"></div>
+						</div>
+						<div class="one-third column">
+							<div id="countdown" class="countdown"></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div id="currentStartEnd"></div>
+				</div>
+				<div calss="row">
+					<div class="notes" id="notes"></div>
+				</div>
+				<!-- /current-event -->
 
-<table class="nav"><tr>
-<td class="left"><div id="currentSubject" class="upNext"></div></td>
-<td class="right"><div id="countdown" class="countdown"></div></td>
-</tr></table>
+				<!-- next-event -->
+				<div class="header">
+					<div class="row">
+						<div class="two-thirds column">
+							<div id="upNext" class="subject"></div>
+						</div>
+						<div class="one-third column">
+							<div id="nextCountdown" class="countdown"></div>
+						</div>
+					</div>
+				</div>
+				<div id="nextStartEnd"></div>
+				<!-- /next-event -->
+				<div id="debug" class="debug"></div>
+			</div>
+			<!-- /current-next-events -->
+		</div>
+	</div>
+</div>
+<!-- /mid-section -->
 
-<div id="currentStartEnd"></div>
-<div class="notesTitle"><h2>Notes</h2>
-<div class="notes" id="notes"></div>
+
+<div class="grid-bottom">
+	<div id="meta" class="grid-meta u-pull-right"></div>
 </div>
 
-<table class="nav"><tr>
-<td class="left"><div id="upNext" class="upNext"></div></td>
-<td class="right"><div id="nextCountdown" class="countdown"></div></td>
-</tr></table>
 
-<div id="nextStartEnd"></div>
-<table class="nav"><tr>
-<td class="nav"><form class="left"><input type="button" value="Previous" onclick="decArray()"></form></td>
-<td class="nav"><form class="right"><input type="button" value="Next" onclick="incArray()"></form></td>
-</tr></table>
-
-<div id="debug" class="debug"></div>
-</div>
-
-<script>
-var version = "0.6.017"
-var debug = true;
-
-var style = 'green';
-var array_counter = 0;
-var cDate = (array_counter + 0);
-var cSubject = (array_counter + 1);
-var cNotes = (array_counter + 2);
-var nSubject = (cSubject + 3);
-var nDate = (cDate + 3);
-
-
-var events = [
-  "May 23, 2019 16:00:00", "start", "",
-  "May 24, 2019 15:00:00", "Example 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Consectetur purus ut faucibus pulvinar elementum. Pellentesque habitant morbi tristique senectus et. Amet risus nullam eget felis. Semper auctor neque vitae tempus quam pellentesque nec nam aliquam.",
-  "May 24, 2019 15:30:00", "Example 2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Consectetur purus ut faucibus pulvinar elementum. Pellentesque habitant morbi tristique senectus et. Amet risus nullam eget felis. Semper auctor neque vitae tempus quam pellentesque nec nam aliquam.",
-  "May 24, 2019 16:30:00", "Leave for Day", "Until next time...",
-  "May 27, 2019 09:00:00", "Memorial Day", "<a href='https://www.history.com/topics/holidays/memorial-day-history'>Memorial Day History</a>",
-  "May 28, 2019 09:00:00", "Example 3", "More Notes"
-];
-
-document.getElementById("notes").innerHTML = events[cNotes];
-
-function incArray() {
-  array_counter++;
-  array_counter++;
-  array_counter++;
-  cDate = array_counter + 0;
-  cSubject = array_counter + 1;
-  cNotes = array_counter + 2;
-  nSubject = cSubject + 3;
-  nDate = cDate + 3;
-  document.getElementById("notes").innerHTML = events[cNotes];
-  countDownDate = new Date(events[nDate]).getTime();
-  currentTimer = new Date(events[cDate]).getTime();
-}
-
-function decArray() {
-  array_counter--;
-  array_counter--;
-  array_counter--;
-  cDate = array_counter + 0;
-  cSubject = array_counter + 1;
-  cNotes = array_counter + 2;
-  nSubject = cSubject + 3;
-  nDate = cDate + 3;
-  document.getElementById("notes").innerHTML = events[cNotes];
-  countDownDate = new Date(events[nDate]).getTime();
-  currentTimer = new Date(events[cDate]).getTime();
-}
-
-// Set the date we're counting down to
-var countDownDate = new Date(events[nDate]).getTime();
-var currentTimer = new Date(events[cDate]).getTime();
-
-// Update the count down every 1 second
-var x = setInterval(function() {
-  //reset style
-  style = 'green';
-
-  // Get today's date and time
-  var now = new Date().getTime();
-
-  // Find the distance between now and the count down date
-  var distance = countDownDate - now;
-  var cDistance = currentTimer - now;
-
-  // Time calculations for days, hours, minutes and seconds
-  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-
-// Day or Days?
-  if (days > 0) {
-    if (days == 1){
-      days = (days + ' Day ');
-    } else {
-      days = (days + ' Days ');
-    }
-  } else {
-    days = '';
-  }
-
-// set style for countdown based on remaining time
-  if (days < 1 && hours < 1) {
-    if (minutes < 0) {
-      style = 'over';
-    } else if (minutes < 15) {
-      style = 'warn';
-    } else {
-      style = 'green';
-    }
-  }
-
-// pad single digits with a '0' prefix
-// when time is out, start counting up by inverting
-  if (hours < 0) {
-    hours = (-hours);
-  }
-  if (hours < 10 && hours >= 0) {
-    hours = ('0' + hours);
-  }
-
-  if (minutes < 0) {
-    minutes = (-minutes);
-  }
-  if (minutes < 10 && minutes >= 0) {
-    minutes = ('0' + minutes);
-  }
-
-  if (seconds < 0) {
-    seconds = (-seconds);
-  }
-  if (seconds < 10 && seconds >= 0) {
-    seconds = ('0' + seconds);
-  }
-
-  // Time calculations for days, hours, minutes and seconds
-  var cDays = Math.floor(cDistance / (1000 * 60 * 60 * 24));
-  var cHours = Math.floor((cDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var cMinutes = Math.floor((cDistance % (1000 * 60 * 60)) / (1000 * 60));
-  var cSeconds = Math.floor((cDistance % (1000 * 60)) / 1000);
-
-// Day or Days?
-  if (cDays > 0) {
-    if (cDays == 1) {
-      cDays = (cDays + ' Day ');
-    } else {
-      cDays = (cDays + ' Days ');
-    }
-  } else {
-    cDays = '';
-  }
-
-// set style for countdown based on remaining time
-//  if (cDays < 1 && cHours < 1) {
-//    if (cMinutes < 15) {
-//      cStyle = 'warn';
-//    } else if (cMinutes < 0) {
-//      cStyle = 'over';
-//    } else {
-//      cStyle = 'green';
-//    }
-//  }
-
-// pad single digits with a '0' prefix
-// when time is out, start counting up by inverting
-  if (cHours < 0) {
-    cHours = (-cHours);
-  }
-  if (cHours < 10 && cHours > -10) {
-    cHours = ('0' + cHours);
-  }
-
-  if (cMinutes < 0) {
-    cMinutes = (-cMinutes);
-  }
-  if (cMinutes < 10 && cMinutes >= 0) {
-    cMinutes = ('0' + cMinutes);
-  }
-
-  if (cSeconds < 0) {
-    cSeconds = (-cSeconds);
-  }
-  if (cSeconds < 10 && cSeconds >=0) {
-    cSeconds = ('0' + cSeconds);
-  }
-
-// A regular clock
-  var d = new Date();
-
-  var hour = d.getHours();
-  var minute = d.getMinutes();
-  var second = d.getSeconds();
-
-  if (hour < 10 && hour >= 0) {
-    hour = ('0' + hour);
-  }
-
-  if (minute < 10 && minute >= 0) {
-    minute = ('0' + minute);
-  }
-
-  if (second < 10 && second >= 0) {
-    second = ('0' + second);
-  }
-
-// Same for UTC
-  var hourUTC = d.getUTCHours();
-  var minuteUTC = d.getUTCMinutes();
-  var secondUTC = d.getUTCSeconds();
-
-  if (hourUTC < 10) {
-    hourUTC = ('0' + hourUTC);
-  }
-
-  if (minuteUTC < 10) {
-    minuteUTC = ('0' + minuteUTC);
-  }
-
-  if (secondUTC < 10) {
-    secondUTC = ('0' + secondUTC);
-  }
-
-  // current event stuff
-  var cStart = events[cDate];
-  var cEnd = events[(cDate + 3)];
-  var nStart = cEnd;
-  var nEnd = events[(cDate + 6)];
-
-
-  document.getElementById("calDate").innerHTML = d.getFullYear() + "/" + d.getMonth() + "/" + d.getDate();
-  document.getElementById("now").innerHTML = hour + ":" + minute + ":" + second;
-  document.getElementById("utc_now").innerHTML = hourUTC + ":" + minuteUTC + ":" + secondUTC;
-
-  // Display the result in the element with id="clock"
-  document.getElementById("countdown").innerHTML = "<div class=" + style + ">" + cDays + cHours + ":" + cMinutes + ":" + cSeconds + "</div>";
-  document.getElementById("nextCountdown").innerHTML = "<div class=" + style + ">" + days + hours + ":" + minutes + ":" + seconds + "</div>";
-  document.getElementById("currentSubject").innerHTML = "<div class=upNext>Now: " + events[cSubject] + "</div>";
-  document.getElementById("currentStartEnd").innerHTML = "Start Time: " + cStart + "<br />End Time: " + cEnd;
-  document.getElementById("upNext").innerHTML = "<div class=upNext>Next: " + events[nSubject] + "</div>";
-  document.getElementById("nextStartEnd").innerHTML = "Start Time: " + nStart + "<br />End Time: " + nEnd;
-
-  if (debug == true) {
-    document.getElementById("debug").innerHTML = "debug: " + debug + "<br />Version: " + version + "<br />Current time object: " + cDate + "<br />Current subject object: " + cSubject + "<br />current notes object: " + cNotes + "<br />next time object: " + nDate + "<br />next subject object: " + nSubject + "<br />current array counter: " + array_counter + "<br />Start Time: " + cStart + "<br />End Time: " + cEnd + "<br />" + cDays + "<br />" + cHours + "<br />" + cMinutes + "<br />" + cSeconds;
-  }
-
-  // If the count down is finished, write some text
-  //if (distance < 0) {
-  //  clearInterval(x);
-  //  document.getElementById("clock").innerHTML = "EXPIRED";
-  //}
-}, 1000);
-</script>
+<script src="events.js"></script>
+<script src="main.js"></script>
+<script src="timerMath.js"></script>
+<script src="clock.js"></script>
 
 </body>
 </html>
